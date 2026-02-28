@@ -1,33 +1,53 @@
+"use client";
+import { format } from "date-fns";
+import { useEffect, useState } from "react";
 import { SlidingNumber } from "./shadcnui/sliding-number";
 
 const Clock = () => {
+  const [hours, setHours] = useState("00");
+  const [minutes, setMinutes] = useState("00");
+  const [second, setSecond] = useState("00");
+  const [meridiem, setMeridiem] = useState("XX");
+  const [date, setDate] = useState(format(new Date(), "eeee, dd - LLLL yyyy"));
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const currentDateTime = new Date();
+
+      setHours(format(currentDateTime, "hh"));
+      setMinutes(format(currentDateTime, "mm"));
+      setSecond(format(currentDateTime, "ss"));
+      setMeridiem(format(currentDateTime, "a"));
+      setDate(format(currentDateTime, "eeee, dd - LLLL yyyy"));
+    }, 1000 * 1);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <div>
-      {" "}
-      <div className="space-y-4">
-        <div className="flex items-center gap-1 font-mono text-9xl">
-          <SlidingNumber
-            value={10}
-            padStart={true}
-          />
-          <span className="animate-pulse">:</span>
+    <div className="space-y-4">
+      <div className="flex items-center gap-1 font-mono text-9xl">
+        <SlidingNumber
+          value={parseInt(hours)}
+          padStart={true}
+        />
+        <span className="animate-pulse">:</span>
 
-          <SlidingNumber
-            value={10}
-            padStart={true}
-          />
-          <span className="animate-pulse">:</span>
+        <SlidingNumber
+          value={parseInt(minutes)}
+          padStart={true}
+        />
+        <span className="animate-pulse">:</span>
 
-          <SlidingNumber
-            value={10}
-            padStart={true}
-          />
+        <SlidingNumber
+          value={parseInt(second)}
+          padStart={true}
+        />
 
-          <span className="ms-2">{"Am"}</span>
-        </div>
-
-        <div className="text-center text-6xl">{" Saturday 21 feb, 2026"}</div>
+        <span className="ms-2">{meridiem}</span>
       </div>
+
+      <div className="text-center text-6xl">{date}</div>
     </div>
   );
 };
